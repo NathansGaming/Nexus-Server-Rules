@@ -1,0 +1,49 @@
+# NexusServerRules configuration.
+
+chat-detection:
+  # true (default): any pattern match, EXACT or FUZZY, auto-restricts.
+  # This is the "err toward stricter auto-action" behavior that was
+  # asked for, and matches what shipped in v0.1.0.
+  #
+  # false: only EXACT matches auto-restrict. FUZZY-only matches (i.e.
+  # ones the edit-distance tolerance caught rather than a verbatim hit)
+  # are still blocked and logged/queued for staff review, but the
+  # player is NOT restricted. Useful if you want to watch the fuzzy
+  # matcher's real false-positive rate for a while before trusting it
+  # to auto-punish on its own.
+  strict-mode: true
+
+grief-detection:
+  # Set to false to disable griefing-burst detection entirely (chat
+  # detection is unaffected either way).
+  enabled: true
+
+  # A player breaking `block-threshold` or more blocks that someone
+  # ELSE placed, within `window-seconds`, triggers a restriction.
+  # Lower threshold / longer window = more sensitive, more false
+  # positives from things like two players mining through shared
+  # scaffolding. Tune based on what you actually see on your server.
+  window-seconds: 5
+  block-threshold: 8
+
+  # How many (block-location -> placer) entries to remember in memory
+  # before the oldest get evicted. Not persisted across restarts -
+  # this is a same-session heuristic, not a claim system.
+  registry-capacity: 50000
+
+explosion-prevention:
+  # Hard-blocks the listed items from ever exploding, for anyone -
+  # this is NOT permission-gated, so there is no bypass permission an
+  # operator can be granted. Both the ignition step and the explosion
+  # event itself are cancelled (see ExplosionGuard.java), so this also
+  # catches TNT summoned directly via command rather than lit normally.
+  #
+  # Add more entries later without touching code - use the item/block's
+  # Bukkit Material name in caps (e.g. "BED" would need per-color entries
+  # since beds are colored blocks; ask if you want help wiring a new one
+  # in, some explosive sources need a line added to ExplosionGuard's
+  # logicalNameFor() mapping the same way TNT's entity forms are mapped).
+  enabled: true
+  banned-items:
+    - "TNT"
+    - "RESPAWN_ANCHOR"

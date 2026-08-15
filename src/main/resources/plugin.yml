@@ -1,0 +1,35 @@
+name: NexusServerRules
+version: '0.5.2'
+main: com.nexus.serverrules.NexusServerRules
+api-version: '1.21'
+author: Nexus
+softdepend: [NexusRealms]
+description: Automatic chat-toxicity and griefing-burst detection with instant, staff-cleared punishment, plus a hard, non-bypassable TNT/respawn-anchor explosion block. Griefing detection is claim/team-aware when NexusRealms is installed.
+
+commands:
+  nexusrules:
+    description: Review and manage NexusServerRules restrictions.
+    usage: /nexusrules <queue|gui|info <player>|clear <player>|reload>
+  appeal:
+    description: Reach staff even while chat-restricted.
+    usage: /appeal <message>
+  ban:
+    description: Ban a player - overrides vanilla /ban with logging + live staff alerts.
+    usage: /ban <player> [reason]
+
+permissions:
+  nexusrules.notify:
+    description: Receive live alerts when a player is auto-restricted, and appeal notifications.
+    default: op
+  nexusrules.queue:
+    description: View the restriction/review queue and case detail.
+    default: op
+  nexusrules.clear:
+    description: Clear a player's restriction.
+    default: op
+  nexusrules.reload:
+    description: Hot-reload patterns.yml.
+    default: op
+  nexusrules.ban:
+    description: Ban players via /ban.
+    default: op
