@@ -1,0 +1,99 @@
+# NexusDreams configuration.
+#
+# Adjust and run /nexusdreams reload to apply - takes effect on the next
+# dream, doesn't retroactively touch effects already applied from a dream
+# that already happened.
+
+dream:
+  enabled: true
+
+  # A player who just had a dream won't get another one for this many
+  # real seconds, even if another night-skip happens right away (e.g. a
+  # plugin or admin command forcing time forward repeatedly). Sleeping
+  # through a normal night is nowhere near this fast on its own - this
+  # is a safety net, not a normal-play limiter.
+  cooldown-seconds: 60
+
+  # How a dream is picked: every available "goodness" signal (0.0 worst -
+  # 1.0 best) is averaged into an overall strain score, then inverted
+  # (strain = 1 - average goodness) and bucketed into one of four tiers
+  # by the thresholds below. With NexusSurvival installed, the signals
+  # are thirst/rad-oxygen/hygiene/infection; without it, this falls back
+  # to vanilla health, hunger, and whether any harmful potion effect is
+  # currently active - see integration/SurvivalBridge.java.
+  #
+  # Separately, whichever single signal scored worst drives which
+  # FLAVOR TEXT bucket gets picked (see the flavor: section below) - the
+  # tier controls how strong the mechanical effect is, the worst stat
+  # controls what the dream is actually "about."
+  peaceful-max-strain: 0.25
+  restless-max-strain: 0.50
+  troubled-max-strain: 0.75
+  # anything above troubled-max-strain is a NIGHTMARE
+
+  # PEACEFUL: strain <= peaceful-max-strain. A real reward for genuinely
+  # thriving going into the night.
+  peaceful-effect: REGENERATION
+  peaceful-effect-seconds: 20
+  peaceful-effect-amplifier: 0
+
+  # RESTLESS: no mechanical effect, flavor text only - the "nothing much
+  # happened, but it wasn't great either" middle ground.
+
+  # TROUBLED: strain <= troubled-max-strain. A mild, temporary hangover.
+  troubled-effect: NAUSEA
+  troubled-effect-seconds: 15
+  troubled-effect-amplifier: 0
+
+  # NIGHTMARE: strain > troubled-max-strain. A rough start to the day.
+  nightmare-effect: DARKNESS
+  nightmare-effect-seconds: 20
+  nightmare-effect-amplifier: 0
+  nightmare-secondary-effect: WEAKNESS
+  nightmare-secondary-seconds: 30
+  nightmare-secondary-amplifier: 0
+  # played to the player only, at the moment the dream resolves
+  nightmare-sound: ENTITY_ELDER_GUARDIAN_CURSE
+
+# Flavor text shown as a title + subtitle when a dream resolves. "default"
+# is used for PEACEFUL/RESTLESS (no single stat needs calling out when
+# things are fine) and as a fallback for TROUBLED/NIGHTMARE if the
+# dominant bad stat doesn't have its own lines. thirst/radiation/
+# hygiene/disease lines are only ever picked with NexusSurvival
+# installed; vanilla is the fallback-signal flavor used when it isn't.
+# Add as many lines per bucket as you want - one is picked at random.
+flavor:
+  peaceful:
+    default:
+      - "You dream of quiet mornings and full water skins."
+      - "A calm night. You wake up rested."
+  restless:
+    default:
+      - "A restless night. You don't remember much of it."
+      - "You half-wake a dozen times. Nothing sticks."
+  troubled:
+    thirst:
+      - "You dream of a well that never fills."
+    radiation:
+      - "You dream of a green glow just past the treeline, getting closer."
+    hygiene:
+      - "You dream you can't get the dirt off your hands."
+    disease:
+      - "You dream you're coughing, and it won't stop."
+    vanilla:
+      - "You dream of a fight you didn't win."
+    default:
+      - "An uneasy night. Something felt wrong."
+  nightmare:
+    thirst:
+      - "You dream you're crawling toward water that keeps receding."
+    radiation:
+      - "You dream your own shadow is glowing. You can't wake up."
+    hygiene:
+      - "You dream something is growing on you. It won't come off."
+    disease:
+      - "You dream of the fever finally winning."
+    vanilla:
+      - "You dream of the moment right before you died. Again."
+    default:
+      - "A nightmare. You wake up in a cold sweat."
