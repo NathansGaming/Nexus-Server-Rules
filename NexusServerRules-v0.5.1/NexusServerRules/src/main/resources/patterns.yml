@@ -1,0 +1,88 @@
+# NexusServerRules - detection patterns.
+#
+# Each entry is a "root term" - you do NOT need to list every spelling
+# variant, missing-letter version, or leetspeak substitution. The
+# TextNormalizer + fuzzy matcher already collapse most obfuscation
+# (spacing, punctuation, symbol substitution, repeated/stretched
+# letters, single-character typos and truncation) down onto whatever
+# root you list here. Add plain, correctly-spelled root words/phrases.
+#
+# Changes here take effect after a server restart, or immediately via
+# /nexusrules reload (nexusrules.reload permission).
+
+# Populated per an explicit request that this plugin needs to actually
+# catch racial/ethnic/homophobic/ableist slurs out of the box, not just
+# after staff manually build the list themselves. This is a starter
+# set of common root forms, NOT exhaustive - add more as your server's
+# real experience calls for it. You do not need to add every spelling:
+# TextNormalizer + the fuzzy matcher already collapse most obfuscation
+# (missing/doubled letters, leetspeak, spacing, punctuation) onto
+# whichever root is closest. The one place that genuinely needs its
+# own separate entry is a variant that is a different WORD, not just a
+# misspelling of the same one - e.g. a slur's "-er" and "-a" endings
+# are far enough apart (2+ character edits) to need both listed
+# explicitly, which is why both appear below.
+slurs:
+  - "nigger"
+  - "nigga"
+  - "chink"
+  - "spic"
+  - "kike"
+  - "gook"
+  - "wetback"
+  - "faggot"
+  - "tranny"
+  - "retard"
+
+# General cuss words / vulgar language - separate from slurs since this
+# is about crude language rather than targeting someone's identity.
+# Same fuzzy-matching coverage applies, so root forms are enough.
+profanity:
+  - "fuck"
+  - "shit"
+  - "bitch"
+  - "cunt"
+  - "asshole"
+  - "bastard"
+  - "dick"
+  - "piss"
+  - "whore"
+  - "slut"
+  - "damn"
+
+# Starter set covering common solicitation/explicit-content phrasing.
+# Expand freely - these are intentionally general/PG-referenced so the
+# config file itself doesn't need to contain graphic terms to be
+# effective; add more explicit terms your community actually sees.
+sexual-content:
+  - "send nudes"
+  - "nudes"
+  - "sexting"
+  - "hook up irl"
+  - "add me on snap for pics"
+  - "onlyfans"
+  - "cam show"
+  - "nsfw pics"
+
+# Starter set covering direct threats and incitement to self-harm
+# directed at another player. Expand with phrasing specific to your
+# server - threat detection benefits especially from staff feedback on
+# real false positives/negatives.
+threats:
+  - "i will kill you"
+  - "im gonna kill you"
+  - "ill kill you"
+  - "i will find you"
+  - "i know where you live"
+  - "ill hurt you"
+  - "im going to hurt you"
+  - "kill yourself"
+  - "kys"
+  - "ill beat you up"
+  - "im going to dox you"
+
+# General harassment / targeted degradation not covered above.
+harassment:
+  - "nobody likes you"
+  - "everyone hates you"
+  - "go die"
