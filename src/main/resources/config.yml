@@ -1,0 +1,213 @@
+# NexusRealms configuration
+
+homes:
+  # how many named homes a normal player can have
+  max-default: 1
+  # how many a player with nexusrealms.homes.admin can have instead
+  max-admin: 5
+
+# Default rules for unclaimed land -- "open terrain," free for anyone to build/use with no claim
+# attached, since it's nobody's -- these are server-wide rather than a per-team setting the way
+# doors/containers/pvp are inside claimed territory. Change these in-game with
+# /realms openterrain <build|containers|doors|pvp|elytra> <on|off>
+# (nexusrealms.openterrain.admin) rather than editing this file directly, so it persists correctly
+# without a restart.
+open-terrain:
+  # can anyone break/place blocks out here (mining, building, etc.) -- true by default, exactly
+  # so open terrain stays open: no claim needed to build or gather
+  allow-build: true
+  # can anyone open chests, barrels, furnaces, and other containers out here
+  allow-containers: true
+  # can anyone use doors, trapdoors, fence gates, buttons, and levers out here
+  allow-doors: true
+  # can players fight each other out here -- off by default, unlike everything else above
+  allow-pvp: false
+  # can players use elytra to glide out here
+  allow-elytra: true
+
+# Territory border popups -- fires whenever a player crosses from one owner into another (walking
+# across a claim edge, or warping in with /home) -- NOT on every single step, only on an actual
+# change of who owns the land. Three independent messages below; leave any one blank ("") to turn
+# just that message off without touching the others. {team} is replaced with the team's name.
+border:
+  enabled: true
+  # "title" (big pop-up across the middle of the screen), "actionbar" (small text just above the
+  # hotbar), or "chat" (a normal chat line)
+  style: title
+  # only used when style is "title" -- how many ticks (20 ticks = 1 second) the title takes to
+  # fade in, how long it stays fully visible, and how long it takes to fade out
+  title-fade-in-ticks: 10
+  title-stay-ticks: 40
+  title-fade-out-ticks: 10
+  messages:
+    # shown when you step onto land claimed by a team you are NOT a member of
+    entering-other: "&e&lEntering {team}'s territory"
+    # shown when you step onto land claimed by your OWN team
+    entering-own: "&a&lEntering your territory (&f{team}&a)"
+    # shown when you step onto unclaimed open terrain
+    entering-open-terrain: "&7&lEntering open terrain"
+
+land:
+  # how many chunks a brand-new team can claim for free, before any upgrade purchase
+  starting-chunks: 10
+
+  # the highest chunk cap a team can reach by buying normal-tier upgrades (below) -- 0 means
+  # unlimited, kept only for backward compatibility with servers that had this key at 0 before
+  # the upgrade system existed
+  max-chunks-per-team: 1000
+
+  # the highest chunk cap reachable via the cheaper op-tier ladder (see upgrade-tiers-op) --
+  # anyone with nexusrealms.chunks.optier (real server operators, by default) gets this ceiling
+  # and this pricing instead of the normal one when they run /realms upgrade
+  max-chunks-per-team-op: 10000
+
+  # safety cap (in chunks) on the radius argument to /realms admin claim|unclaim --
+  # nexusrealms.land.admin holders use this to bulk-claim/unclaim a big square area for a team in
+  # one command (e.g. pre-building a "country" before handing it to players), and this just
+  # guards against an accidental huge number trying to claim (and write to disk) an enormous area
+  # in one go. 25 = up to a 51x51 chunk square (2,601 chunks) per command -- plenty for a large
+  # kingdom; raise it if you genuinely need bigger single claims.
+  admin-bulk-claim-max-radius: 25
+
+  # /realms claim radius <radius> -- the same square-area bulk-claim mechanic as the admin command
+  # above, but for regular team officers claiming for their OWN team (no nexusrealms.land.admin
+  # needed). Two separate caps, matching the two different risks:
+  #  - player-radius-claim-max-chunks: the hard ceiling on how many chunks ONE run of the command
+  #    can actually claim, however big a radius was requested. Deliberately does NOT auto-raise the
+  #    team's chunk cap the way the admin version does -- it still stops at the team's current cap
+  #    and tells them to /realms upgrade, so this can't be used to skip the paid upgrade tiers.
+  #  - player-radius-claim-max-search-radius: separate safety bound on the radius argument itself,
+  #    so a huge number (e.g. 5000) can't make the server loop over millions of chunk lookups just
+  #    to find 50 unclaimed ones. 15 = searches up to a 31x31 square (961 chunks) looking for chunks
+  #    to claim, even though it'll still stop at player-radius-claim-max-chunks successful claims.
+  player-radius-claim-max-chunks: 50
+  player-radius-claim-max-search-radius: 15
+
+  # the purchase ladder everyone sees by default: /realms upgrade <chunks> charges the listed
+  # price as a flat, one-time cost to raise a team's cap straight to that tier -- a team can jump
+  # to any tier above its current cap, it doesn't have to buy every rung on the way up. Add,
+  # remove, or re-price rows freely; the 25/50/100 -> 1000 numbers below are exactly what was
+  # asked for, with two extra rungs (250, 500) added in between so the curve isn't one huge jump
+  # from $100k to $10m -- tune or delete those two if you'd rather keep it a hard jump.
+  upgrade-tiers:
+    - chunks: 25
+      price: 25000
+    - chunks: 50
+      price: 50000
+    - chunks: 100
+      price: 100000
+    - chunks: 250
+      price: 500000
+    - chunks: 500
+      price: 2000000
+    - chunks: 1000
+      price: 10000000
+
+  # the discounted ladder for nexusrealms.chunks.optier holders, going all the way to the
+  # max-chunks-per-team-op ceiling above. These numbers are a starting-point guess (roughly
+  # 5x cheaper per chunk than the normal ladder, extended out to 10,000) -- there was no exact
+  # spec for this one, so treat every price here as something to tune to taste.
+  upgrade-tiers-op:
+    - chunks: 25
+      price: 5000
+    - chunks: 50
+      price: 10000
+    - chunks: 100
+      price: 20000
+    - chunks: 250
+      price: 75000
+    - chunks: 500
+      price: 250000
+    - chunks: 1000
+      price: 1000000
+    - chunks: 2500
+      price: 3000000
+    - chunks: 5000
+      price: 7500000
+    - chunks: 10000
+      price: 20000000
+
+  # The "small piece of land inside the country" layer: any current team member can stake one of
+  # these (up to max-per-member) anywhere fully inside their own team's already-claimed chunks --
+  # a house, a shop, whatever. It's protected as that player's own, even from their own
+  # teammates; only the personal claim's owner can build/break inside it. Staking one fails if
+  # any part of the requested radius falls outside your team's territory, or overlaps another
+  # player's existing personal claim.
+  personal-claim:
+    # radius in blocks around wherever the player is standing when they run /pclaim create
+    radius: 15
+    # how many personal claims one player can have at once (e.g. 2 = a house AND a shop)
+    max-per-member: 2
+
+# The protection/rollback/watchlist system -- a from-scratch equivalent of CoreProtect, built
+# specifically into NexusRealms. Every block break/place, every container withdrawal/deposit,
+# and every item lost on death is logged with an exact timestamp, world, and coordinates to a
+# local SQLite database (protect.db in this plugin's data folder) -- /protect lookup queries it,
+# /protect rollback actually restores matching changes. Nothing here is configurable in the sense
+# of tunable numbers the way the rest of this file is -- it's always-on logging, not a system with
+# dials to turn. The one real setting is the watchlist itself:
+protect:
+  # materials that trigger an immediate chat notification to anyone with
+  # nexusrealms.protect.notify the moment a player obtains one (picks it up, pulls it from a
+  # container, or crafts it) -- add/remove these in-game with /protect watch add|remove <material>
+  # rather than editing this list directly; that's what actually persists it correctly.
+  watchlist: []
+
+# A WorldEdit-inspired region editor -- deliberately a focused subset (set/replace/walls/outline/
+# copy/paste/undo), not a full clone of WorldEdit's many years of commands. Operators
+# (nexusrealms.worldedit.admin) can use it anywhere; regular players
+# (nexusrealms.worldedit.use, on by default) can only run an operation when EVERY corner of their
+# selection falls inside one of their own personal claims -- not team territory generally, one
+# specific property "attached to their name." /redit paste is checked the same way, but against
+# where the paste would LAND (relative to the player's current position), not where it was
+# copied from -- copying inside your own claim doesn't let you paste it somewhere else that isn't.
+worldedit:
+  # the item that acts as the selection wand (/redit wand gives you one) -- left-click sets
+  # position 1, right-click sets position 2, same convention as real WorldEdit
+  wand-material: GOLDEN_AXE
+  # applies to EVERY /redit operation, admin or not -- a safety net against one accidental huge
+  # selection (or clipboard) freezing the server
+  max-volume: 250000
+  # how many operations back /redit undo can go, per player -- kept small on purpose, since each
+  # entry holds a full block-by-block snapshot in memory
+  undo-depth: 5
+
+# The onboarding/teaching system -- two independent mechanisms working together so new players
+# pick up the whole command family without needing a wiki page.
+hints:
+  enabled: true
+
+  # a broadcast tip, cycling through the list below one at a time, on a plain real-seconds
+  # interval -- always running for anyone online, independent of what they've actually done.
+  # "interval-seconds" is exactly that -- how many real seconds between each tip.
+  periodic:
+    enabled: true
+    interval-seconds: 600
+    messages:
+      - "&7Tip: &f/team create <name> &7starts your own country -- claim land together with whoever you invite."
+      - "&7Tip: &f/realms claim &7(officer+ in your team) claims the chunk you're standing in for your country."
+      - "&7Tip: &f/pclaim create &7stakes a personal plot inside your own team's already-claimed land -- a house, a shop, whatever."
+      - "&7Tip: &f/pclaim trust <player> visitor &7or &fbuilder &7lets someone specific into your plot, even if they're not on your team."
+      - "&7Tip: &f/sethome &7saves a home you can warp back to anytime with &f/home&7."
+      - "&7Tip: &f/redit wand &7gives you a region-editing tool -- works anywhere for ops, only inside your own plot for everyone else."
+      - "&7Tip: &f/team settings doors on &7(or containers/pvp) lets your country decide what outsiders can do on your land."
+
+  # fired to ONE player, right after they successfully do the triggering thing -- not a broadcast.
+  # By default each key only fires once ever per player (repeat-every-time: false) -- an
+  # experienced player claiming their 50th chunk doesn't need the tutorial line again, but their
+  # first chunk is exactly when it's useful. Add/edit/remove lines freely; each key can have as
+  # many lines as you want, sent all at once.
+  contextual:
+    enabled: true
+    repeat-every-time: false
+    team_create:
+      - "&aYou're now a country leader! Try &f/realms claim &awhile standing in the chunk you want."
+      - "&aInvite others with &f/team invite <player>&a -- they'll count as trusted citizens once they're in."
+    land_claim:
+      - "&aChunk claimed! Any trusted member of your country can now stake a personal plot inside it with &f/pclaim create&a."
+    pclaim_create:
+      - "&aThat's your plot! Let specific people in with &f/pclaim trust <player> visitor &a(or &fbuilder&a for building rights)."
+      - "&aYou can also fix it up yourself with &f/redit wand&a -- it only works inside land that's actually yours."
+    sethome_first:
+      - "&aHome saved! Warp back anytime with &f/home&a, or set more with &f/sethome <name>&a (up to your limit)."
+
