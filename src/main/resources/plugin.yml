@@ -1,0 +1,22 @@
+name: NexusSurvival
+version: ${project.version}
+main: com.nexusuniverse.survival.NexusSurvivalPlugin
+api-version: '1.21'
+author: Nexus Universe
+description: Thirst, radiation zones, armor hygiene, disease (with severity, contagion, and environmental sourcing), hostile mob overhauls (Feral/TNT/Plague Zombies, limb shooting, crawlers), and a fixed WorldSpawn point (first-time joins, deathless-of-a-bed respawns, and a self-service /spawn command all land at the same configured location).
+
+commands:
+  nexussurvival:
+    description: NexusSurvival administration.
+    aliases: [survival, ns2]
+    usage: /nexussurvival <give <item> [player]|radiation <wand|create|remove|list>|status|resetme|removeall|plaguedeaths|cureplayer <player>|reload>
+    permission: nexussurvival.admin
+  spawn:
+    description: Teleport to the server's fixed world spawn point.
+    aliases: [worldspawn, wspawn]
+    usage: /spawn
+
+permissions:
+  nexussurvival.admin:
+    description: Manage NexusSurvival.
+    default: op
