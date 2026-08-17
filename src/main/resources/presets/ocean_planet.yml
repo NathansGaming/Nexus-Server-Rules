@@ -1,0 +1,49 @@
+# Tier 1 (instant, no restart) - a near-total ocean world with scattered
+# low islands. Set liquidLevel well above baseHeight so almost every
+# column ends up submerged.
+id: ocean_planet
+displayName: "Ocean Planet"
+environment: NORMAL
+seed: 19700101
+
+terrain:
+  seaLevel: 90
+  baseHeight: 60
+  heightVariation: 35
+  noise:
+    frequency: 0.01
+    octaves: 5
+    lacunarity: 2.0
+    gain: 0.5
+    ridged: false
+    warp: 0.15
+  craters:
+    enabled: false
+  caves:
+    enabled: false
+
+palette:
+  surfaceBlock: minecraft:sand
+  subsurfaceBlock: minecraft:sandstone
+  subsurfaceDepth: 5
+  deepBlock: minecraft:stone
+  liquidBlock: minecraft:water
+  liquidLevel: 90
+
+biomes:
+  mode: blended
+  entries:
+    - id: minecraft:warm_ocean
+      weight: 3
+    - id: minecraft:beach
+      weight: 1
+
+trees:
+  enabled: false
+
+flavor:
+  gravity: 1.0
+  alwaysClearWeather: false
+  generateStructures: false
+  generateDecorations: false
+  generateVanillaCaves: false
