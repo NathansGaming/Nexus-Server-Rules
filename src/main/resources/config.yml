@@ -1,0 +1,68 @@
+# VoidRescue - plugin-wide settings.
+#
+# Background: this plugin exists to fix a specific, confirmed-in-the-wild bug
+# where players (so far only seen on Bedrock clients connecting through
+# Geyser) fall below the world, end up "technically dead" server-side at a
+# sliver of health, and get stuck in a state where normal /tp and /kill don't
+# fix them. This matches known, still-open upstream issues (see this
+# plugin's README for links) with no official fix as of this writing - so
+# this plugin works around it from the Paper side instead of waiting on one.
+
+# How often (in ticks, 20 ticks = 1 second) the background watchdog scans all
+# online players for "below the world" or "stuck dead" conditions. Lower =
+# faster detection, slightly more overhead. 10 ticks (0.5s) is a reasonable
+# default even on a busy server.
+scanIntervalTicks: 10
+
+# A player is considered "in the void" once their Y coordinate drops this far
+# below the world's actual minimum build height (world.getMinHeight() - this
+# value), not a hardcoded Y like -64. This makes it correct for both normal
+# worlds and any custom-height dimensions (e.g. Nexus Dimensions Tier 2
+# worlds) automatically.
+voidMarginBelowMinHeight: 4
+
+# If a player has been in the "isDead() but not yet respawned" state for this
+# many ticks in a row, the watchdog force-rescues them even if they're not
+# below the void threshold - this is the fix for the "technically dead, can't
+# teleport, can't kill" desync. 40 ticks = ~2 seconds; a legitimate death
+# screen takes longer than that for a human to even see and click through, so
+# this is safe. Set higher if you get false positives on a slow server.
+stuckDeadTicks: 40
+
+# After a rescue teleport/respawn, how many ticks to wait before applying the
+# heal and clearing fall distance/fire/freeze. A few known Paper death-desync
+# reports (see README) trace back to attribute/health changes applied in the
+# same tick as the death/respawn transition - a short delay avoids re-triggering
+# that. 4 ticks is a good default; raise it if rescues still occasionally fail
+# to "stick" on your server.
+respawnDelayTicks: 4
+
+# Minimum seconds between two automatic (non-forced) rescues of the same
+# player, so a player oscillating right at the void boundary doesn't spam
+# teleports/messages. This does NOT apply to forced rescues (the stuck-dead
+# watchdog path, or a staff member using /voidrescue directly) - those always
+# fire immediately.
+rescueCooldownSeconds: 5
+
+# Health (in half-hearts, so 20.0 = 10 hearts = full vanilla health) a rescued
+# player is healed to, clamped to the player's actual max health so this is
+# still safe on servers with modified max-health attributes.
+rescueHealth: 20.0
+
+# If true, broadcasts a short message to all online players with the
+# voidrescue.notify permission (default: op) whenever someone is
+# auto-rescued, so staff can keep an eye on how often this is happening.
+notifyStaff: true
+
+# Optional per-world spawn overrides, used instead of that world's normal
+# spawn point when rescuing a player. Useful if a dimension's vanilla spawn
+# point is itself unsafe (e.g. over a void or inside terrain). Uncommented
+# example:
+#
+# worldSpawns:
+#   world_nether:
+#     x: 0.5
+#     y: 90
+#     z: 0.5
+#     yaw: 0
+#     pitch: 0
