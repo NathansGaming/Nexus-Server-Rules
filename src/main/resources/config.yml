@@ -1,0 +1,53 @@
+# NexusKairos configuration
+
+# Kairos AI backend -- once set, ALL fight dialogue is generated live by
+# your Flask backend instead of the small local fallback pool. Leave
+# endpoint blank to run on the fallback pool only (useful for testing
+# the fight loop before the AI hookup is wired).
+kairos-ai:
+  endpoint: ""
+  api-key: ""
+
+arena:
+  world: world_the_end
+  x: 1961
+  y: 65
+  z: -7
+  # radius around the arena center that counts as "in the fight" -- used
+  # for mob spawn positioning and hazard placement
+  radius: 20
+
+fight:
+  # persisted automatically -- how many times Kairos has been fought,
+  # server-wide, across all players. Drives the tier formula below.
+  # Do not hand-edit unless you want to jump the story forward/back.
+  count: 0
+
+  # base stats at fight #1
+  base-health: 200.0
+  base-damage: 6.0
+
+  # growth per fight -- kept small since it compounds over "hundreds"
+  # of fights. Tune these once you've playtested a stretch of fights.
+  health-growth-per-fight: 4.0
+  damage-growth-per-fight: 0.15
+
+  # health % (0.0-1.0) at which Kairos escapes instead of dying, on a
+  # normal (non-true-ending) fight
+  escape-health-percent: 0.12
+
+  # how many pig or enderman kills, while in the End, are required as
+  # the ritual's sacrifice before a summon is allowed. Progress is
+  # per-player and only consumed on a successful summon.
+  sacrifice-required: 5
+
+  # once the server-wide fight count reaches this number, the true
+  # ending automatically arms itself for the next summon -- no more
+  # manual /kairos armtrueending needed in normal play (that command
+  # still exists for testing).
+  true-ending-unlock-count: 50
+
+# true ending: leave disabled until you decide the exact unlock
+# condition (see README). When true, the NEXT summon skips the escape
+# mechanic entirely and Kairos can actually be killed.
+true-ending-armed: false
